@@ -61,6 +61,15 @@ const exports = function($scope, $injector) {
   this.elevationLayers = ['aster', 'srtm'];
 
   /**
+   * @type {Array.<gmf.mobile.measure.pointComponent.LayerConfig>}
+   * @export
+   */
+  this.elevationLayersConfig = [
+    {name: 'aster', unit: 'm'},
+    {name: 'srtm', unit: 'm'}
+  ];
+
+  /**
    * @type {string}
    * @export
    */

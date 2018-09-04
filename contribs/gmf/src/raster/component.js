@@ -61,8 +61,9 @@ function gmfElevationwidgetTemplateUrl($attrs, gmfElevationwidgetTemplateUrl) {
  *            gmf-elevation-active="elevationActive"
  *            gmf-elevation-elevation="elevationValue"
  *            gmf-elevation-layer="mainCtrl.elevationLayer"
+ *            gmf-elevation-layersconfig="::mainCtrl.elevationLayersConfig"
  *            gmf-elevation-map="::mainCtrl.map">
- *            {{elevationValue | number:2}}m
+ *            {{elevationValue}}
  *      </span>
  *
  *
@@ -71,6 +72,7 @@ function gmfElevationwidgetTemplateUrl($attrs, gmfElevationwidgetTemplateUrl) {
  * @htmlAttribute {number} gmf-elevation-elevation The value to set with the
  *     elevation value.
  * @htmlAttribute {string} gmf-elevation-layer Elevation layer to use.
+ * @htmlAttribute {Array.<gmf.mobile.measure.pointComponent.LayerConfig>} gmf-elevation-layerconfig Elevation layer configurations.
  * @htmlAttribute {ol.Map} gmf-elevation-map The map.
  * @return {angular.Directive} Directive Definition Object.
  * @ngdoc directive
@@ -84,6 +86,7 @@ exports.component_ = function() {
     scope: {
       'active': '<gmfElevationActive',
       'elevation': '=gmfElevationElevation',
+      'layersconfig': '=gmfElevationLayersconfig',
       'loading': '=?gmfElevationLoading',
       'layer': '<gmfElevationLayer',
       'map': '=gmfElevationMap'
@@ -110,15 +113,22 @@ exports.directive('gmfElevation', exports.component_);
 
 /**
  * @param {!angular.Scope} $scope Scope.
- * @param {ngeox.miscDebounce} ngeoDebounce Ngeo debounce factory
- * @param {gmf.raster.RasterService} gmfRaster Gmf Raster service
+ * @param {!angular.$filter} $filter Angular filter.
+ * @param {!ngeox.miscDebounce} ngeoDebounce Ngeo debounce factory
+ * @param {!gmf.raster.RasterService} gmfRaster Gmf Raster service
  * @constructor
  * @private
  * @ngInject
  * @ngdoc controller
  * @ngname gmfElevationController
  */
-exports.Controller_ = function($scope, ngeoDebounce, gmfRaster) {
+exports.Controller_ = function($scope, $filter, ngeoDebounce, gmfRaster) {
+
+  /**
+   * @type {!angular.$filter}
+   * @private
+   */
+  this.filter_ = $filter;
 
   /**
    * @type {ngeox.miscDebounce}
@@ -133,12 +143,18 @@ exports.Controller_ = function($scope, ngeoDebounce, gmfRaster) {
   this.gmfRaster_ = gmfRaster;
 
   /**
+   * @type {!Array.<gmf.mobile.measure.pointComponent.LayerConfig>}
+   * @private
+   */
+  this.layersConfig;
+
+  /**
    * @type {boolean}
    */
   this.active;
 
   /**
-   * @type {!number|undefined}
+   * @type {!string|undefined}
    * @export
    */
   this.elevation;
@@ -245,7 +261,11 @@ exports.Controller_.prototype.pointerStop_ = function(e) {
  */
 exports.Controller_.prototype.getRasterSuccess_ = function(resp) {
   googAsserts.assert(this.layer, 'A layer should be selected');
-  this.elevation = resp[this.layer];
+  const value = resp[this.layer];
+  const options = this.layersconfig[this.layer] || {};
+  const filter = options.filter || "number";
+  const unit = options.unit || "m";
+  this.elevation = this.filter_(filter)(value) + '\u00a0' + unit;
   this.loading = false;
 };
 
@@ -271,6 +291,7 @@ exports.controller('GmfElevationController', exports.Controller_);
  *  <gmf-elevationwidget
  *      gmf-elevationwidget-map="::mainCtrl.map"
  *      gmf-elevationwidget-layers="::mainCtrl.elevationLayers"
+ *      gmf-elevationwidget-layersconfig="::mainCtrl.elevationLayersConfig"
  *      gmf-elevationwidget-active="mainCtrl.showInfobar">
  *  </gmf-elevationwidget>
  *
@@ -288,6 +309,7 @@ exports.widgetComponent_ = {
   bindings: {
     'map': '<gmfElevationwidgetMap',
     'layers': '<gmfElevationwidgetLayers',
+    'layersconfig': '=gmfElevationwidgetLayersconfig',
     'active': '<gmfElevationwidgetActive'
   },
   templateUrl: gmfElevationwidgetTemplateUrl
@@ -314,6 +336,12 @@ exports.WidgetController_ = function() {
   this.layers;
 
   /**
+   * @type {!Array.<gmf.mobile.measure.pointComponent.LayerConfig>}
+   * @private
+   */
+  this.layersconfig;
+
+  /**
    * @type {boolean}
    * @export
    */
@@ -332,8 +360,7 @@ exports.WidgetController_.prototype.$onInit = function() {
 };
 
 
-exports.controller('gmfElevationwidgetController',
-  exports.WidgetController_);
+exports.controller('gmfElevationwidgetController', exports.WidgetController_);
 
 
 export default exports;

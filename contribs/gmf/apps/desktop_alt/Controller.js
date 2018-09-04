@@ -80,6 +80,15 @@ const exports = function($scope, $injector, ngeoFile, gettext, $q) {
   this.elevationLayers = ['srtm'];
 
   /**
+   * @type {Array.<gmf.mobile.measure.pointComponent.LayerConfig>}
+   * @export
+   */
+  this.elevationLayersConfig = [
+    {name: 'aster', unit: 'm'},
+    {name: 'srtm', unit: 'm'}
+  ];
+
+  /**
    * @type {Object.<string, gmfx.ProfileLineConfiguration>}
    * @export
    */
