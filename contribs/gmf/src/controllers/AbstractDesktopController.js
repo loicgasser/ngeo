@@ -7,6 +7,7 @@ import gmfDrawingModule from 'gmf/drawing/module.js';
 import gmfEditingModule from 'gmf/editing/module.js';
 import gmfPermalinkShareComponent from 'gmf/permalink/shareComponent.js';
 import gmfPrintComponent from 'gmf/print/component.js';
+import gmfFloorSelectorComponent from 'gmf/floor/module.js';
 import gmfProfileModule from 'gmf/profile/module.js';
 import gmfRasterComponent from 'gmf/raster/component.js';
 import ngeoDrawFeatures from 'ngeo/draw/features.js';
@@ -233,6 +234,7 @@ exports.module = angular.module('GmfAbstractDesktopControllerModule', [
   gmfEditingModule.name,
   gmfPermalinkShareComponent.name,
   gmfPrintComponent.name,
+  gmfFloorSelectorComponent.name,
   gmfProfileModule.name,
   gmfRasterComponent.name,
   ngeoDrawFeatures.name,

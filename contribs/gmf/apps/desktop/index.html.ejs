@@ -64,6 +64,10 @@
               data-toggle="tooltip" data-placement="left" data-original-title="{{'Filter'|translate}}">
               <span class="fa fa-filter"></span>
             </button>
+            <button ngeo-btn class="btn btn-default" ng-model="mainCtrl.floorSelectorActive"
+              data-toggle="tooltip" data-placement="left" data-original-title="{{'Floor'|translate}}">
+              <span class="fa fa-arrows-alt-v"></span>
+            </button>
             <button ngeo-btn class="btn btn-default" ng-model="mainCtrl.editFeatureActive"
               data-toggle="tooltip" data-placement="left" data-original-title="{{'Editing'|translate}}"
               ng-show="mainCtrl.hasEditableLayers" ng-cloak>
@@ -138,6 +142,17 @@
                   map="mainCtrl.map"
                   tool-group="mainCtrl.mapToolsGroup">
               </gmf-filterselector>
+            </div>
+          </div>
+          <div ng-show="mainCtrl.floorSelectorActive" class="row">
+            <div class="col-sm-12">
+              <div class="gmf-app-tools-content-heading">
+                {{'Floor'|translate}}
+                <a class="btn close" ng-click="mainCtrl.floorSelectorActive = false">&times;</a>
+              </div>
+              <gmf-floor-selector
+                  gmf-floor-selector-map="::mainCtrl.map">
+              </gmf-floor-selector>
             </div>
           </div>
           <div ng-show="mainCtrl.editFeatureActive" class="row">

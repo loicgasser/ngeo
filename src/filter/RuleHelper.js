@@ -472,8 +472,9 @@ const exports = class {
     let filter = null;
 
     const value = rule.value;
-    if (!value) {
-      return null;
+
+    if (value === null) {
+      return value;
     }
 
     const expression = value.expression;
